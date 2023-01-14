@@ -10,6 +10,7 @@ app.config['MYSQL_DB'] = 'RideMyWay'
 
 mysql =MySQL(app)
 
+   #REGISTER
 @app.route("/register/user", methods=["POST"])
 def register():
     try:
@@ -25,12 +26,27 @@ def register():
         return jsonify({"message": "User successfully registered"})
     except :
         return jsonify({"message":"This Email already exists!"})
-    
 
 
+  #LOGIN
 
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.json['email']
+    password = request.json['password']
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT * FROM users where email = email AND password = password'),(email,password)
 
-
+    if email == '%s' and password == '%s':
+            return jsonify({'message': 'Login successful'})
+    elif email != '%s' and password == '%s':
+           return jsonify({'message': 'Incorrect email'})
+    elif password == '%s' and password != '%s':
+        return jsonify({'message': 'Incorrect password'})
+    else:
+         return jsonify({'message': 'Incorrect email and password'})
+            
+            
 @app.route("/") 
 def home():
     return "Hello world yeeey !"

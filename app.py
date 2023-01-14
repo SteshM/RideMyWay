@@ -33,18 +33,24 @@ def register():
 @app.route("/login", methods=["POST"])
 def login():
     email = request.json['email']
+    app.logger.info("email %s",email)
     password = request.json['password']
     cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM users where email = email AND password = password'),(email,password)
+    cursor.execute('SELECT * FROM users where email = %s',[email])
+    record = cursor.fetchone()
+    app.logger.info("record %s" , record)
+    app.logger.info("password %s" , record[4])
+    app.logger.info("first_name %s" , record[1])
+    
 
-    if email == '%s' and password == '%s':
+    if record == None:
+        return jsonify ({'message': "Email doesn't exist"})
+
+    elif password == record[4]:
             return jsonify({'message': 'Login successful'})
-    elif email != '%s' and password == '%s':
-           return jsonify({'message': 'Incorrect email'})
-    elif password == '%s' and password != '%s':
-        return jsonify({'message': 'Incorrect password'})
+    
     else:
-         return jsonify({'message': 'Incorrect email and password'})
+         return jsonify({'message': 'Incorrect password'})
             
             
 @app.route("/") 

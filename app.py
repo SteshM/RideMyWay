@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 app = Flask(__name__)
 
 
+
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'password'
@@ -51,8 +52,44 @@ def login():
     
     else:
          return jsonify({'message': 'Incorrect password'})
-            
-            
+
+
+@app.route('/rides', methods=['GET'])
+def getRide():
+
+ # Create a list to store the results
+    ride_list = []
+
+    # Iterate through the data and append each item to the list
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM rides")
+    record = cursor.fetchall() 
+    counter = 1
+    app.logger.info("-------------------------------------------------------------------------------------------------------")
+    for ride in record:
+        for column in ride:
+            app.logger.info(" row:%s  | column:%s" ,counter, column)
+        
+        for column in ride:
+            app.logger.info("------------------")
+
+        
+
+
+
+        ride_list.append({
+            'id': ride[0],
+            'origin':ride[3],
+            'destination':ride[4],
+            'departure_time':str(ride[6]),
+        })
+        counter+=1
+
+
+    # Return the list of rides
+    return jsonify(ride_list)
+
+
 @app.route("/") 
 def home():
     return "Hello world yeeey !"
